@@ -1,6 +1,6 @@
 # AppDataCleaner
 
-**AppDataCleaner** 是一个强大的工具，用于扫描和清理Windows系统中 `C:\Users\[Your Username]\AppData` 文件夹内的所有应用程序数据。这个工具专为那些希望定期清理系统垃圾文件，提高系统性能的用户设计。
+**AppDataCleaner** 是一个简易的工具，用于扫描和清理Windows系统中 `C:\Users\[Your Username]\AppData` 文件夹内的应用程序数据。众所周知，各大应用喜欢在C盘拉屎，卸载了数据也不会消失，本工具帮助你消灭垃圾。
 
 ## 主要功能
 
