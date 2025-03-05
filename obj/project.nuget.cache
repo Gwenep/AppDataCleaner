@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "PAIkGpoGRS0=",
+  "success": true,
+  "projectFilePath": "E:\\AppDataCleaner\\AppDataCleaner\\AppDataCleaner.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\yzp\\.nuget\\packages\\newtonsoft.json\\13.0.3\\newtonsoft.json.13.0.3.nupkg.sha512"
+  ],
+  "logs": []
+}
