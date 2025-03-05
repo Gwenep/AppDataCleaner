@@ -10,7 +10,7 @@
 - **用户友好界面**：提供简洁直观的用户界面，方便所有用户使用。
 
 ## 使用方法
-点击下载
+点击 [这里](https://github.com/Gwenep/AppDataCleaner/releases) 访问发布页面并下载最新版本。
 下载后解压，双击AppDataCleaner.exe运行
 
 ## 贡献
