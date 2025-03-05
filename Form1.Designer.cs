@@ -42,7 +42,7 @@
             // 
             // button1
             // 
-            button1.Location = new Point(12, 21);
+            button1.Location = new Point(12, 12);
             button1.Name = "button1";
             button1.Size = new Size(177, 23);
             button1.TabIndex = 1;
@@ -52,7 +52,7 @@
             // 
             // button2
             // 
-            button2.Location = new Point(478, 21);
+            button2.Location = new Point(567, 12);
             button2.Name = "button2";
             button2.Size = new Size(75, 23);
             button2.TabIndex = 2;
@@ -62,7 +62,7 @@
             // 
             // button3
             // 
-            button3.Location = new Point(559, 21);
+            button3.Location = new Point(648, 12);
             button3.Name = "button3";
             button3.Size = new Size(75, 23);
             button3.TabIndex = 3;
@@ -72,7 +72,7 @@
             // 
             // button4
             // 
-            button4.Location = new Point(643, 21);
+            button4.Location = new Point(732, 12);
             button4.Name = "button4";
             button4.Size = new Size(75, 23);
             button4.TabIndex = 4;
@@ -87,13 +87,14 @@
             dataGridView1.AllowUserToResizeRows = false;
             dataGridView1.BackgroundColor = Color.White;
             dataGridView1.Columns.AddRange(new DataGridViewColumn[] { dataGridViewTextBoxColumn1, dataGridViewTextBoxColumn2, dataGridViewTextBoxColumn3 });
-            dataGridView1.Location = new Point(12, 60);
+            dataGridView1.Location = new Point(12, 41);
             dataGridView1.Name = "dataGridView1";
             dataGridView1.RowHeadersVisible = false;
             dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dataGridView1.Size = new Size(706, 343);
+            dataGridView1.Size = new Size(794, 343);
             dataGridView1.TabIndex = 5;
             dataGridViewTextBoxColumn1.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            dataGridViewTextBoxColumn3.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
             // 
             // dataGridViewTextBoxColumn1
             // 
@@ -106,23 +107,25 @@
             dataGridViewTextBoxColumn2.HeaderText = "大小 (字节)";
             dataGridViewTextBoxColumn2.Name = "dataGridViewTextBoxColumn2";
             dataGridViewTextBoxColumn2.ReadOnly = true;
+            // 
             // dataGridViewTextBoxColumn3
             // 
             dataGridViewTextBoxColumn3.HeaderText = "描述";
             dataGridViewTextBoxColumn3.Name = "dataGridViewTextBoxColumn3";
             dataGridViewTextBoxColumn3.ReadOnly = true;
+            // 
             // progressBar1
             // 
-            progressBar1.Location = new Point(12, 411);
+            progressBar1.Location = new Point(12, 390);
             progressBar1.Name = "progressBar1";
-            progressBar1.Size = new Size(706, 23);
+            progressBar1.Size = new Size(794, 23);
             progressBar1.TabIndex = 6;
             // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 17F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(730, 442);
+            ClientSize = new Size(818, 420);
             Controls.Add(progressBar1);
             Controls.Add(dataGridView1);
             Controls.Add(button4);

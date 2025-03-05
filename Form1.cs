@@ -200,8 +200,21 @@ namespace AppDataCleaner // 替换为你的命名空间
                         {
                             File.Delete(path);
                         }
+                        else
+                        {
+                            MessageBox.Show("文件或文件夹不存在。");
+                        }
 
+                        // 更新 DataGridView
                         ScanFoldersAsync(); // 重新扫描文件夹
+                    }
+                    catch (UnauthorizedAccessException ex)
+                    {
+                        MessageBox.Show($"访问被拒绝: {ex.Message}");
+                    }
+                    catch (IOException ex)
+                    {
+                        MessageBox.Show($"IO错误: {ex.Message}");
                     }
                     catch (Exception ex)
                     {
@@ -215,6 +228,8 @@ namespace AppDataCleaner // 替换为你的命名空间
                 MessageBox.Show("请先选择一个文件或文件夹。");
             }
         }
+
+
 
         private void OpenButton_Click(object sender, EventArgs e)
         {
@@ -268,7 +283,7 @@ namespace AppDataCleaner // 替换为你的命名空间
                 if (row.Cells[0].Value.ToString() == path) // 使用完整路径进行匹配
                 {
                     // 更新描述部分
-                    row.Cells[1].Value = note;
+                    row.Cells[2].Value = note;
                     break;
                 }
             }
