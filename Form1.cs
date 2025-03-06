@@ -205,8 +205,8 @@ namespace AppDataCleaner // 替换为你的命名空间
                             MessageBox.Show("文件或文件夹不存在。");
                         }
 
-                        // 更新 DataGridView
-                        ScanFoldersAsync(); // 重新扫描文件夹
+                        // 从 DataGridView 中删除选定的行
+                        dataGridView1.Rows.RemoveAt(dataGridView1.SelectedRows[0].Index);
                     }
                     catch (UnauthorizedAccessException ex)
                     {
