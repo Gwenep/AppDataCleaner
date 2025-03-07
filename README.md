@@ -12,7 +12,8 @@
 ## 使用方法
 点击 [这里](https://github.com/Gwenep/AppDataCleaner/releases) 访问发布页面并下载最新版本。
 下载后解压，双击AppDataCleaner.exe运行。
-![image](https://github.com/user-attachments/assets/3d23c589-cf88-4d4e-b8e9-ff4c865c9ce1)
+![QQ20250307-093125](https://github.com/user-attachments/assets/21c600a4-fd4e-4587-ab1c-f51e59b40bd1)
+
 
 
 ## 贡献
