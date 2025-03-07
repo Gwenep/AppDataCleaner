@@ -17,3 +17,4 @@ E:\AppDataCleaner\AppDataCleaner\obj\Debug\net8.0-windows\ref\AppDataCleaner.dll
 E:\AppDataCleaner\AppDataCleaner\obj\Debug\net8.0-windows\AppDataCleaner.csproj.AssemblyReference.cache
 E:\AppDataCleaner\AppDataCleaner\bin\Debug\net8.0-windows\Newtonsoft.Json.dll
 E:\AppDataCleaner\AppDataCleaner\obj\Debug\net8.0-windows\AppDataC.B828561A.Up2Date
+E:\AppDataCleaner\AppDataCleaner\obj\Debug\net8.0-windows\AppDataCleaner.sourcelink.json

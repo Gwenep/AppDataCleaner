@@ -1,4 +1,6 @@
-﻿namespace AppDataCleaner
+﻿using System.Windows.Forms;
+
+namespace AppDataCleaner
 {
     partial class Form1
     {
@@ -37,14 +39,15 @@
             dataGridViewTextBoxColumn2 = new DataGridViewTextBoxColumn();
             dataGridViewTextBoxColumn3 = new DataGridViewTextBoxColumn();
             progressBar1 = new ProgressBar();
+            checkedListBox1 = new CheckedListBox();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             SuspendLayout();
             // 
             // button1
             // 
-            button1.Location = new Point(12, 12);
+            button1.Location = new Point(12, 9);
             button1.Name = "button1";
-            button1.Size = new Size(177, 23);
+            button1.Size = new Size(104, 23);
             button1.TabIndex = 1;
             button1.Text = "开始扫描";
             button1.UseVisualStyleBackColor = true;
@@ -52,7 +55,7 @@
             // 
             // button2
             // 
-            button2.Location = new Point(567, 12);
+            button2.Location = new Point(668, 9);
             button2.Name = "button2";
             button2.Size = new Size(75, 23);
             button2.TabIndex = 2;
@@ -62,7 +65,7 @@
             // 
             // button3
             // 
-            button3.Location = new Point(648, 12);
+            button3.Location = new Point(749, 9);
             button3.Name = "button3";
             button3.Size = new Size(75, 23);
             button3.TabIndex = 3;
@@ -72,7 +75,7 @@
             // 
             // button4
             // 
-            button4.Location = new Point(732, 12);
+            button4.Location = new Point(833, 9);
             button4.Name = "button4";
             button4.Size = new Size(75, 23);
             button4.TabIndex = 4;
@@ -87,17 +90,16 @@
             dataGridView1.AllowUserToResizeRows = false;
             dataGridView1.BackgroundColor = Color.White;
             dataGridView1.Columns.AddRange(new DataGridViewColumn[] { dataGridViewTextBoxColumn1, dataGridViewTextBoxColumn2, dataGridViewTextBoxColumn3 });
-            dataGridView1.Location = new Point(12, 41);
+            dataGridView1.Location = new Point(132, 41);
             dataGridView1.Name = "dataGridView1";
             dataGridView1.RowHeadersVisible = false;
             dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dataGridView1.Size = new Size(794, 343);
+            dataGridView1.Size = new Size(776, 346);
             dataGridView1.TabIndex = 5;
-            dataGridViewTextBoxColumn1.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            dataGridViewTextBoxColumn3.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
             // 
             // dataGridViewTextBoxColumn1
             // 
+            dataGridViewTextBoxColumn1.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
             dataGridViewTextBoxColumn1.HeaderText = "路径";
             dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
             dataGridViewTextBoxColumn1.ReadOnly = true;
@@ -110,22 +112,33 @@
             // 
             // dataGridViewTextBoxColumn3
             // 
+            dataGridViewTextBoxColumn3.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
             dataGridViewTextBoxColumn3.HeaderText = "描述";
             dataGridViewTextBoxColumn3.Name = "dataGridViewTextBoxColumn3";
             dataGridViewTextBoxColumn3.ReadOnly = true;
             // 
             // progressBar1
             // 
-            progressBar1.Location = new Point(12, 390);
+            progressBar1.Location = new Point(6, 393);
             progressBar1.Name = "progressBar1";
-            progressBar1.Size = new Size(794, 23);
+            progressBar1.Size = new Size(902, 23);
             progressBar1.TabIndex = 6;
+            // 
+            // checkedListBox1
+            // 
+            checkedListBox1.FormattingEnabled = true;
+            checkedListBox1.Items.AddRange(new object[] { "Local", "LocalLow", "Roaming" });
+            checkedListBox1.Location = new Point(12, 41);
+            checkedListBox1.Name = "checkedListBox1";
+            checkedListBox1.Size = new Size(104, 346);
+            checkedListBox1.TabIndex = 7;
             // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 17F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(818, 420);
+            ClientSize = new Size(920, 420);
+            Controls.Add(checkedListBox1);
             Controls.Add(progressBar1);
             Controls.Add(dataGridView1);
             Controls.Add(button4);
@@ -151,5 +164,6 @@
         private DataGridViewTextBoxColumn dataGridViewTextBoxColumn2;
         private DataGridViewTextBoxColumn dataGridViewTextBoxColumn3;
         private ProgressBar progressBar1;
+        private CheckedListBox checkedListBox1;
     }
 }

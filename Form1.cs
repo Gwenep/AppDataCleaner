@@ -17,6 +17,15 @@ namespace AppDataCleaner // 替换为你的命名空间
         {
             InitializeComponent();
             LoadNotes(); // 加载备注
+            InitcheckedListBox1();
+        }
+
+        private void InitcheckedListBox1()//默认全选
+        {
+            for (int i = 0; i < checkedListBox1.Items.Count; i++)
+            {
+                checkedListBox1.SetItemChecked(i, true);
+            }
         }
 
         private string FormatSize(long size)
@@ -50,25 +59,32 @@ namespace AppDataCleaner // 替换为你的命名空间
             int totalFiles = 0;
             int totalDirectories = 0;
 
-            // 先计算总文件和文件夹数量
-            foreach (var folder in targetFolders)
+            // 计算被选中文件夹的总文件和文件夹数量
+            foreach (var item in checkedListBox1.CheckedItems)
             {
-                if (Directory.Exists(folder))
+                string folderName = item.ToString();
+                string folderPath = Array.Find(targetFolders, f => f.EndsWith(folderName));
+
+                if (folderPath != null && Directory.Exists(folderPath))
                 {
-                    totalFiles += Directory.GetFiles(folder).Length;
-                    totalDirectories += Directory.GetDirectories(folder).Length;
+                    totalFiles += Directory.GetFiles(folderPath).Length;
+                    totalDirectories += Directory.GetDirectories(folderPath).Length;
                 }
             }
 
             int processedFiles = 0;
             int processedDirectories = 0;
 
-            foreach (var folder in targetFolders)
+            // 遍历 ChecklistBox 的选项
+            foreach (var item in checkedListBox1.CheckedItems)
             {
-                if (Directory.Exists(folder))
+                string folderName = item.ToString();
+                string folderPath = Array.Find(targetFolders, f => f.EndsWith(folderName));
+
+                if (folderPath != null && Directory.Exists(folderPath))
                 {
-                    var files = Directory.GetFiles(folder);
-                    var subDirectories = Directory.GetDirectories(folder);
+                    var files = Directory.GetFiles(folderPath);
+                    var subDirectories = Directory.GetDirectories(folderPath);
 
                     // 使用并行处理文件
                     Parallel.ForEach(files, (file) =>
@@ -80,9 +96,9 @@ namespace AppDataCleaner // 替换为你的命名空间
                                 dataGridView1.Rows.Add(file, FormatSize(fileSize), GetNoteDescription(Path.GetFileName(file)));
                             });
                         }
-                        catch (UnauthorizedAccessException)
+                        catch (Exception ex)
                         {
-                            // 忽略拒绝访问的文件
+                            // 忽略报错的文件
                         }
 
                         Interlocked.Increment(ref processedFiles);
@@ -99,9 +115,9 @@ namespace AppDataCleaner // 替换为你的命名空间
                                 dataGridView1.Rows.Add(subDir, FormatSize(dirSize), GetNoteDescription(Path.GetFileName(subDir)));
                             });
                         }
-                        catch (UnauthorizedAccessException)
+                        catch (Exception ex)
                         {
-                            // 忽略拒绝访问的文件夹
+                            // 忽略报错的文件
                         }
 
                         Interlocked.Increment(ref processedDirectories);
@@ -110,10 +126,12 @@ namespace AppDataCleaner // 替换为你的命名空间
                 }
                 else
                 {
-                    MessageBox.Show($"Folder not found: {folder}");
+                    MessageBox.Show($"Folder not found: {folderPath}");
                 }
             }
         }
+
+
 
         // 计算文件夹的总大小
         private long GetDirectorySize(string dirPath)
@@ -210,15 +228,15 @@ namespace AppDataCleaner // 替换为你的命名空间
                     }
                     catch (UnauthorizedAccessException ex)
                     {
-                        MessageBox.Show($"访问被拒绝: {ex.Message}");
+                        MessageBox.Show($"删除失败!访问被拒绝: {ex.Message}");
                     }
                     catch (IOException ex)
                     {
-                        MessageBox.Show($"IO错误: {ex.Message}");
+                        MessageBox.Show($"删除失败!IO错误: {ex.Message}");
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show($"删除失败: {ex.Message}");
+                        MessageBox.Show($"删除失败!: {ex.Message}");
                     }
                 }
                 // 如果用户选择“否”，什么都不做
