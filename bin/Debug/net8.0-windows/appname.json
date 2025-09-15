@@ -1,4 +1,4 @@
-{
+﻿{
   "Agora": "音视频通话和实时互动 SDK 文件。",
   "Application Data": "存储应用程序数据和配置文件。",
   "Backup": "备份文件和数据。",
@@ -127,5 +127,17 @@
   "mod.io": "模组管理相关文件。",
   "GSE Saves": "模拟Steam客户端游戏存档。",
   "Balatro": "小丑牌相关存档文件。",
-  "Brotato": "土豆兄弟相关存档文件。"
+  "Brotato": "土豆兄弟相关存档文件。",
+  "GPSoftware": "Directory Opus相关文件。",
+  "upway_pc-updater": "金荣中国相关文件。",
+  "TENCENT": "腾讯相关文件。",
+  "Pobo6": "彭博软件相关文件。",
+  "Q7": "快期相关文件。",
+  "upway_pc": "金荣中国相关文件。",
+  "Trae": "Trae相关文件。",
+  "xlgame": "疑似迅雷游戏相关文件。",
+  "MetaQuotes": "MT交易软件相关文件。",
+  "360Safe": "360安全软件相关文件。",
+  "USOShared": "软件缓存。",
+  "360": "360相关文件。"
 }

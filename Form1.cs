@@ -6,21 +6,21 @@ using System.Linq;
 using System.Windows.Forms;
 using Newtonsoft.Json;
 
-namespace AppDataCleaner // Ìæ»»ÎªÄãµÄÃüÃû¿Õ¼ä
+namespace AppDataCleaner // æ›¿æ¢ä¸ºä½ çš„å‘½åç©ºé—´
 {
     public partial class Form1 : Form
     {
         private Dictionary<string, string> notes = new Dictionary<string, string>();
-        private const string notesFilePath = "appname.json"; // ÅäÖÃÎÄ¼şÂ·¾¶
+        private const string notesFilePath = "appname.json"; // å¤‡æ³¨æ–‡ä»¶è·¯å¾„
 
         public Form1()
         {
             InitializeComponent();
-            LoadNotes(); // ¼ÓÔØ±¸×¢
+            LoadNotes(); // åŠ è½½å¤‡æ³¨
             InitcheckedListBox1();
         }
 
-        private void InitcheckedListBox1()//Ä¬ÈÏÈ«Ñ¡
+        private void InitcheckedListBox1()//é»˜è®¤å…¨é€‰
         {
             for (int i = 0; i < checkedListBox1.Items.Count; i++)
             {
@@ -31,13 +31,13 @@ namespace AppDataCleaner // Ìæ»»ÎªÄãµÄÃüÃû¿Õ¼ä
         private string FormatSize(long size)
         {
             if (size < 1024)
-                return $"{size} ×Ö½Ú";
+                return $"{size} B";
             else if (size < 1024 * 1024)
-                return $"{size / 1024.0:F2} KB"; // ±£ÁôÁ½Î»Ğ¡Êı
+                return $"{size / 1024.0:F2} KB"; // ä¿ç•™ä¸¤ä½å°æ•°
             else if (size < 1024 * 1024 * 1024)
-                return $"{size / (1024.0 * 1024):F2} MB"; // ±£ÁôÁ½Î»Ğ¡Êı
+                return $"{size / (1024.0 * 1024):F2} MB"; // ä¿ç•™ä¸¤ä½å°æ•°
             else
-                return $"{size / (1024.0 * 1024 * 1024):F2} GB"; // ±£ÁôÁ½Î»Ğ¡Êı
+                return $"{size / (1024.0 * 1024 * 1024):F2} GB"; // ä¿ç•™ä¸¤ä½å°æ•°
         }
 
         private void UpdateProgress(int value)
@@ -48,22 +48,35 @@ namespace AppDataCleaner // Ìæ»»ÎªÄãµÄÃüÃû¿Õ¼ä
         private void ScanFolders(IProgress<int> progress)
         {
             string userProfilePath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+            string programDataPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData); // C:\ProgramData
             string[] targetFolders = {
         Path.Combine(userProfilePath, "AppData", "Local"),
         Path.Combine(userProfilePath, "AppData", "LocalLow"),
-        Path.Combine(userProfilePath, "AppData", "Roaming")
+        Path.Combine(userProfilePath, "AppData", "Roaming"),
+        programDataPath // æ·»åŠ ProgramDataç›®å½•
     };
 
-            dataGridView1.Rows.Clear(); // Çå¿ÕÖ®Ç°µÄ½á¹û
+            dataGridView1.Rows.Clear(); // æ¸…é™¤ä¹‹å‰çš„ç»“æœ
+            fileSizeCache.Clear(); // æ¸…é™¤æ–‡ä»¶å¤§å°ç¼“å­˜
 
             int totalFiles = 0;
             int totalDirectories = 0;
 
-            // ¼ÆËã±»Ñ¡ÖĞÎÄ¼ş¼ĞµÄ×ÜÎÄ¼şºÍÎÄ¼ş¼ĞÊıÁ¿
+            // è®¡ç®—è¢«é€‰æ‹©æ–‡ä»¶å¤¹çš„æ€»æ–‡ä»¶å’Œæ–‡ä»¶å¤¹æ•°é‡
             foreach (var item in checkedListBox1.CheckedItems)
             {
                 string folderName = item.ToString();
-                string folderPath = Array.Find(targetFolders, f => f.EndsWith(folderName));
+                string folderPath;
+                
+                // ç‰¹æ®Šå¤„ç†ProgramDataï¼Œå› ä¸ºå®ƒæ˜¯å®Œæ•´è·¯å¾„
+                if (folderName == "ProgramData")
+                {
+                    folderPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
+                }
+                else
+                {
+                    folderPath = Array.Find(targetFolders, f => f.EndsWith(folderName));
+                }
 
                 if (folderPath != null && Directory.Exists(folderPath))
                 {
@@ -75,49 +88,59 @@ namespace AppDataCleaner // Ìæ»»ÎªÄãµÄÃüÃû¿Õ¼ä
             int processedFiles = 0;
             int processedDirectories = 0;
 
-            // ±éÀú ChecklistBox µÄÑ¡Ïî
+            // å¤„ç† ChecklistBox çš„é€‰é¡¹
             foreach (var item in checkedListBox1.CheckedItems)
             {
                 string folderName = item.ToString();
-                string folderPath = Array.Find(targetFolders, f => f.EndsWith(folderName));
+                string folderPath;
+                
+                // ç‰¹æ®Šå¤„ç†ProgramDataï¼Œå› ä¸ºå®ƒæ˜¯å®Œæ•´è·¯å¾„
+                if (folderName == "ProgramData")
+                {
+                    folderPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
+                }
+                else
+                {
+                    folderPath = Array.Find(targetFolders, f => f.EndsWith(folderName));
+                }
 
                 if (folderPath != null && Directory.Exists(folderPath))
                 {
                     var files = Directory.GetFiles(folderPath);
                     var subDirectories = Directory.GetDirectories(folderPath);
 
-                    // Ê¹ÓÃ²¢ĞĞ´¦ÀíÎÄ¼ş
+                    // ä½¿ç”¨å¹¶è¡Œå¤„ç†æ–‡ä»¶
                     Parallel.ForEach(files, (file) =>
                     {
                         try
                         {
-                            long fileSize = new FileInfo(file).Length; // »ñÈ¡ÎÄ¼ş´óĞ¡
+                            long fileSize = new FileInfo(file).Length; // è·å–æ–‡ä»¶å¤§å°
                             Invoke((MethodInvoker)delegate {
-                                dataGridView1.Rows.Add(file, FormatSize(fileSize), GetNoteDescription(Path.GetFileName(file)));
+                                AddRowWithSizeCache(file, FormatSize(fileSize), GetNoteDescription(Path.GetFileName(file)), fileSize);
                             });
                         }
                         catch (Exception ex)
                         {
-                            // ºöÂÔ±¨´íµÄÎÄ¼ş
+                            // å¿½ç•¥ä¸å¯è®¿é—®æ–‡ä»¶
                         }
 
                         Interlocked.Increment(ref processedFiles);
                         progress.Report((processedFiles + processedDirectories) * 100 / (totalFiles + totalDirectories));
                     });
 
-                    // Ê¹ÓÃ²¢ĞĞ´¦ÀíÎÄ¼ş¼Ğ
+                    // ä½¿ç”¨å¹¶è¡Œå¤„ç†å­ç›®å½•
                     Parallel.ForEach(subDirectories, (subDir) =>
                     {
                         try
                         {
-                            long dirSize = GetDirectorySize(subDir); // »ñÈ¡ÎÄ¼ş¼Ğ´óĞ¡
+                            long dirSize = GetDirectorySize(subDir); // è·å–æ–‡ä»¶å¤¹å¤§å°
                             Invoke((MethodInvoker)delegate {
-                                dataGridView1.Rows.Add(subDir, FormatSize(dirSize), GetNoteDescription(Path.GetFileName(subDir)));
+                                AddRowWithSizeCache(subDir, FormatSize(dirSize), GetNoteDescription(Path.GetFileName(subDir)), dirSize);
                             });
                         }
                         catch (Exception ex)
                         {
-                            // ºöÂÔ±¨´íµÄÎÄ¼ş
+                            // å¿½ç•¥ä¸å¯è®¿é—®æ–‡ä»¶
                         }
 
                         Interlocked.Increment(ref processedDirectories);
@@ -126,21 +149,21 @@ namespace AppDataCleaner // Ìæ»»ÎªÄãµÄÃüÃû¿Õ¼ä
                 }
                 else
                 {
-                    MessageBox.Show($"Folder not found: {folderPath}");
+                    MessageBox.Show($"æ‰¾ä¸åˆ°æ–‡ä»¶å¤¹: {folderPath}");
                 }
             }
         }
 
 
 
-        // ¼ÆËãÎÄ¼ş¼ĞµÄ×Ü´óĞ¡
+        // è®¡ç®—æ–‡ä»¶å¤¹çš„æ€»å¤§å°
         private long GetDirectorySize(string dirPath)
         {
             long size = 0;
 
             try
             {
-                // ¼ÆËãÎÄ¼ş´óĞ¡
+                // è®¡ç®—æ–‡ä»¶å¤§å°
                 var files = Directory.GetFiles(dirPath, "*.*", SearchOption.AllDirectories);
                 foreach (var file in files)
                 {
@@ -150,13 +173,13 @@ namespace AppDataCleaner // Ìæ»»ÎªÄãµÄÃüÃû¿Õ¼ä
                     }
                     catch (UnauthorizedAccessException)
                     {
-                        // ºöÂÔ¾Ü¾ø·ÃÎÊµÄÎÄ¼ş
+                        // å¿½ç•¥æ‹’ç»è®¿é—®çš„æ–‡ä»¶
                     }
                 }
             }
             catch (UnauthorizedAccessException)
             {
-                // ºöÂÔ¾Ü¾ø·ÃÎÊµÄÎÄ¼ş¼Ğ
+                // å¿½ç•¥æ‹’ç»è®¿é—®çš„æ–‡ä»¶å¤¹
             }
 
             return size;
@@ -165,13 +188,16 @@ namespace AppDataCleaner // Ìæ»»ÎªÄãµÄÃüÃû¿Õ¼ä
         private async void ScanFoldersAsync()
         {
             await Task.Run(() => ScanFolders(new Progress<int>(UpdateProgress)));
+            
+            // æ‰«æå®Œæˆåè‡ªåŠ¨æŒ‰æ–‡ä»¶å¤§å°æ’åº
+            SortDataGridViewByFileSize();
         }
 
         private void LoadNotes()
         {
             if (File.Exists(notesFilePath))
             {
-                var json = File.ReadAllText(notesFilePath);
+                var json = File.ReadAllText(notesFilePath, System.Text.Encoding.UTF8);
                 notes = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
             }
         }
@@ -179,7 +205,7 @@ namespace AppDataCleaner // Ìæ»»ÎªÄãµÄÃüÃû¿Õ¼ä
         private void SaveNotes()
         {
             var json = JsonConvert.SerializeObject(notes, Newtonsoft.Json.Formatting.Indented);
-            File.WriteAllText(notesFilePath, json);
+            File.WriteAllText(notesFilePath, json, System.Text.Encoding.UTF8);
         }
 
         private void buttonScan_Click(object sender, EventArgs e)
@@ -197,12 +223,12 @@ namespace AppDataCleaner // Ìæ»»ÎªÄãµÄÃüÃû¿Õ¼ä
         {
             if (dataGridView1.SelectedRows.Count > 0)
             {
-                // ÌáÈ¡Â·¾¶
+                // è·å–è·¯å¾„
                 string path = dataGridView1.SelectedRows[0].Cells[0].Value.ToString();
 
-                // µ¯³öÈ·ÈÏ¶Ô»°¿ò
-                DialogResult result = MessageBox.Show("É¾³ıÎ´ÖªµÄÎÄ¼ş¿ÉÄÜµ¼ÖÂÄúÈí¼şÅäÖÃ¡¢ÓÎÏ·´æµµ¶ªÊ§µÈ£¬ÄúÈ·¶¨ÒªÉ¾³ıÑ¡¶¨µÄÏîÂğ£¿",
-                                                       "È·ÈÏÉ¾³ı",
+                // å¼¹å‡ºç¡®è®¤å¯¹è¯æ¡†
+                DialogResult result = MessageBox.Show("åˆ é™¤æœªçŸ¥çš„æ–‡ä»¶å¯èƒ½å¯¼è‡´ç¨‹åºé…ç½®ä¸¢å¤±ã€æ¸¸æˆå­˜æ¡£ä¸¢å¤±ç­‰ï¼Œç¡®è®¤è¦åˆ é™¤é€‰å®šçš„é¡¹å—ï¼Ÿ",
+                                                       "ç¡®è®¤åˆ é™¤",
                                                        MessageBoxButtons.YesNo,
                                                        MessageBoxIcon.Warning);
 
@@ -220,30 +246,36 @@ namespace AppDataCleaner // Ìæ»»ÎªÄãµÄÃüÃû¿Õ¼ä
                         }
                         else
                         {
-                            MessageBox.Show("ÎÄ¼ş»òÎÄ¼ş¼Ğ²»´æÔÚ¡£");
+                            MessageBox.Show("æ–‡ä»¶æˆ–æ–‡ä»¶å¤¹ä¸å­˜åœ¨ã€‚");
                         }
 
-                        // ´Ó DataGridView ÖĞÉ¾³ıÑ¡¶¨µÄĞĞ
+                        // ä»ç¼“å­˜ä¸­ç§»é™¤è¯¥è·¯å¾„
+                        if (fileSizeCache.ContainsKey(path))
+                        {
+                            fileSizeCache.Remove(path);
+                        }
+                        
+                        // ä» DataGridView ä¸­åˆ é™¤é€‰å®šçš„è¡Œ
                         dataGridView1.Rows.RemoveAt(dataGridView1.SelectedRows[0].Index);
                     }
                     catch (UnauthorizedAccessException ex)
                     {
-                        MessageBox.Show($"É¾³ıÊ§°Ü!·ÃÎÊ±»¾Ü¾ø: {ex.Message}");
+                        MessageBox.Show($"åˆ é™¤å¤±è´¥!è®¿é—®è¢«æ‹’ç»: {ex.Message}");
                     }
                     catch (IOException ex)
                     {
-                        MessageBox.Show($"É¾³ıÊ§°Ü!IO´íÎó: {ex.Message}");
+                        MessageBox.Show($"åˆ é™¤å¤±è´¥!IOé”™è¯¯: {ex.Message}");
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show($"É¾³ıÊ§°Ü!: {ex.Message}");
+                        MessageBox.Show($"åˆ é™¤å¤±è´¥!: {ex.Message}");
                     }
                 }
-                // Èç¹ûÓÃ»§Ñ¡Ôñ¡°·ñ¡±£¬Ê²Ã´¶¼²»×ö
+                // å¦‚æœç”¨æˆ·é€‰æ‹©"å¦"ï¼Œä»€ä¹ˆéƒ½ä¸åš
             }
             else
             {
-                MessageBox.Show("ÇëÏÈÑ¡ÔñÒ»¸öÎÄ¼ş»òÎÄ¼ş¼Ğ¡£");
+                MessageBox.Show("è¯·å…ˆé€‰æ‹©ä¸€ä¸ªæ–‡ä»¶æˆ–æ–‡ä»¶å¤¹ã€‚");
             }
         }
 
@@ -253,19 +285,19 @@ namespace AppDataCleaner // Ìæ»»ÎªÄãµÄÃüÃû¿Õ¼ä
         {
             if (dataGridView1.SelectedRows.Count > 0)
             {
-                string path = dataGridView1.SelectedRows[0].Cells[0].Value.ToString(); // ÌáÈ¡Â·¾¶
+                string path = dataGridView1.SelectedRows[0].Cells[0].Value.ToString(); // è·å–è·¯å¾„
                 try
                 {
                     System.Diagnostics.Process.Start("explorer.exe", path);
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"´ò¿ªÊ§°Ü: {ex.Message}");
+                    MessageBox.Show($"æ‰“å¼€å¤±è´¥: {ex.Message}");
                 }
             }
             else
             {
-                MessageBox.Show("ÇëÏÈÑ¡ÔñÒ»¸öÎÄ¼ş»òÎÄ¼ş¼Ğ¡£");
+                MessageBox.Show("è¯·å…ˆé€‰æ‹©ä¸€ä¸ªæ–‡ä»¶æˆ–æ–‡ä»¶å¤¹ã€‚");
             }
         }
 
@@ -273,24 +305,24 @@ namespace AppDataCleaner // Ìæ»»ÎªÄãµÄÃüÃû¿Õ¼ä
         {
             if (dataGridView1.SelectedRows.Count > 0)
             {
-                string path = dataGridView1.SelectedRows[0].Cells[0].Value.ToString(); // ÌáÈ¡ÍêÕûÂ·¾¶
-                string name = Path.GetFileName(path); // »ñÈ¡ÎÄ¼ş»òÎÄ¼ş¼ĞÃû³Æ
+                string path = dataGridView1.SelectedRows[0].Cells[0].Value.ToString(); // è·å–å®Œæ•´è·¯å¾„
+                string name = Path.GetFileName(path); // è·å–æ–‡ä»¶æˆ–æ–‡ä»¶å¤¹åç§°
                 string currentNote = notes.ContainsKey(name) ? notes[name] : "";
 
-                string note = Microsoft.VisualBasic.Interaction.InputBox("ÇëÊäÈëÎÄ¼şÃèÊö£º", "ÃèÊö", currentNote);
+                string note = Microsoft.VisualBasic.Interaction.InputBox("è¯·è¾“å…¥æ–‡ä»¶å¤‡æ³¨ä¿¡æ¯", "å¤‡æ³¨", currentNote);
 
                 if (!string.IsNullOrWhiteSpace(note))
                 {
-                    notes[name] = note; // Ö»±£´æÎÄ¼ş»òÎÄ¼ş¼ĞµÄÃû³Æ×÷ÎªÃèÊö
-                    SaveNotes(); // ±£´æÃèÊöµ½ÎÄ¼ş
+                    notes[name] = note; // åªä¿å­˜æ–‡ä»¶æˆ–æ–‡ä»¶å¤¹çš„åç§°ä½œä¸ºç´¢å¼•
+                    SaveNotes(); // ä¿å­˜å¤‡æ³¨åˆ°æ–‡ä»¶
 
-                    // ¸üĞÂ DataGridView ÖĞµÄ±¸×¢ÏÔÊ¾
-                    UpdateDataGridViewItem(path, note); // Ê¹ÓÃÍêÕûÂ·¾¶½øĞĞ¸üĞÂ
+                    // æ›´æ–° DataGridView ä¸­çš„å¤‡æ³¨æ˜¾ç¤º
+                    UpdateDataGridViewItem(path, note); // ä½¿ç”¨å®Œæ•´è·¯å¾„è¿›è¡Œæ›´æ–°
                 }
             }
             else
             {
-                MessageBox.Show("ÇëÏÈÑ¡ÔñÒ»¸öÎÄ¼ş»òÎÄ¼ş¼Ğ¡£");
+                MessageBox.Show("è¯·å…ˆé€‰æ‹©ä¸€ä¸ªæ–‡ä»¶æˆ–æ–‡ä»¶å¤¹ã€‚");
             }
         }
 
@@ -298,12 +330,64 @@ namespace AppDataCleaner // Ìæ»»ÎªÄãµÄÃüÃû¿Õ¼ä
         {
             foreach (DataGridViewRow row in dataGridView1.Rows)
             {
-                if (row.Cells[0].Value.ToString() == path) // Ê¹ÓÃÍêÕûÂ·¾¶½øĞĞÆ¥Åä
+                if (row.Cells[0].Value.ToString() == path) // ä½¿ç”¨å®Œæ•´è·¯å¾„è¿›è¡ŒåŒ¹é…
                 {
-                    // ¸üĞÂÃèÊö²¿·Ö
+                    // æ›´æ–°å¤‡æ³¨å†…å®¹
                     row.Cells[2].Value = note;
                     break;
                 }
+            }
+        }
+
+        // å­˜å‚¨åŸå§‹æ–‡ä»¶å¤§å°å€¼çš„å­—å…¸ï¼Œç”¨äºæ’åº
+        private Dictionary<string, long> fileSizeCache = new Dictionary<string, long>();
+
+        // æ·»åŠ è¡Œåˆ°DataGridViewå¹¶ç¼“å­˜åŸå§‹å¤§å°å€¼
+        private void AddRowWithSizeCache(string path, string formattedSize, string description, long rawSize)
+        {
+            dataGridView1.Rows.Add(path, formattedSize, description);
+            fileSizeCache[path] = rawSize;
+        }
+
+        // å¤„ç†DataGridViewåˆ—æ ‡é¢˜ç‚¹å‡»äº‹ä»¶
+        private void DataGridView1_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            // å¦‚æœç‚¹å‡»çš„æ˜¯å¤§å°åˆ—ï¼ˆç´¢å¼•ä¸º1ï¼‰
+            if (e.ColumnIndex == 1)
+            {
+                // æŒ‰ç…§æ•°å€¼å¤§å°æ’åºï¼Œè€Œä¸æ˜¯å­—ç¬¦ä¸²
+                SortDataGridViewByFileSize();
+            }
+        }
+
+        // æŒ‰æ–‡ä»¶å¤§å°æ’åºDataGridView
+        private void SortDataGridViewByFileSize()
+        {
+            // åˆ›å»ºä¸€ä¸ªä¸´æ—¶åˆ—è¡¨æ¥å­˜å‚¨è¡Œæ•°æ®
+            List<DataGridViewRow> rows = new List<DataGridViewRow>();
+            foreach (DataGridViewRow row in dataGridView1.Rows)
+            {
+                rows.Add(row);
+            }
+
+            // æŒ‰ç…§ç¼“å­˜çš„åŸå§‹å¤§å°å€¼æ’åº
+            rows.Sort((a, b) => 
+            {
+                string pathA = a.Cells[0].Value.ToString();
+                string pathB = b.Cells[0].Value.ToString();
+                
+                long sizeA = fileSizeCache.ContainsKey(pathA) ? fileSizeCache[pathA] : 0;
+                long sizeB = fileSizeCache.ContainsKey(pathB) ? fileSizeCache[pathB] : 0;
+                
+                // é™åºæ’åˆ—ï¼ˆä»å¤§åˆ°å°ï¼‰
+                return sizeB.CompareTo(sizeA);
+            });
+
+            // æ¸…ç©ºDataGridViewå¹¶æŒ‰æ’åºåçš„é¡ºåºé‡æ–°æ·»åŠ è¡Œ
+            dataGridView1.Rows.Clear();
+            foreach (DataGridViewRow row in rows)
+            {
+                dataGridView1.Rows.Add(row);
             }
         }
     }

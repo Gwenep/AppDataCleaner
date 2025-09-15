@@ -96,6 +96,7 @@ namespace AppDataCleaner
             dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dataGridView1.Size = new Size(776, 346);
             dataGridView1.TabIndex = 5;
+            dataGridView1.ColumnHeaderMouseClick += DataGridView1_ColumnHeaderMouseClick;
             // 
             // dataGridViewTextBoxColumn1
             // 
@@ -103,12 +104,14 @@ namespace AppDataCleaner
             dataGridViewTextBoxColumn1.HeaderText = "路径";
             dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
             dataGridViewTextBoxColumn1.ReadOnly = true;
+            dataGridViewTextBoxColumn1.SortMode = DataGridViewColumnSortMode.Programmatic;
             // 
             // dataGridViewTextBoxColumn2
             // 
             dataGridViewTextBoxColumn2.HeaderText = "大小 (字节)";
             dataGridViewTextBoxColumn2.Name = "dataGridViewTextBoxColumn2";
             dataGridViewTextBoxColumn2.ReadOnly = true;
+            dataGridViewTextBoxColumn2.SortMode = DataGridViewColumnSortMode.Programmatic;
             // 
             // dataGridViewTextBoxColumn3
             // 
@@ -116,6 +119,7 @@ namespace AppDataCleaner
             dataGridViewTextBoxColumn3.HeaderText = "描述";
             dataGridViewTextBoxColumn3.Name = "dataGridViewTextBoxColumn3";
             dataGridViewTextBoxColumn3.ReadOnly = true;
+            dataGridViewTextBoxColumn3.SortMode = DataGridViewColumnSortMode.Programmatic;
             // 
             // progressBar1
             // 
@@ -127,7 +131,7 @@ namespace AppDataCleaner
             // checkedListBox1
             // 
             checkedListBox1.FormattingEnabled = true;
-            checkedListBox1.Items.AddRange(new object[] { "Local", "LocalLow", "Roaming" });
+            checkedListBox1.Items.AddRange(new object[] { "Local", "LocalLow", "Roaming", "ProgramData" });
             checkedListBox1.Location = new Point(12, 41);
             checkedListBox1.Name = "checkedListBox1";
             checkedListBox1.Size = new Size(104, 346);
@@ -149,7 +153,7 @@ namespace AppDataCleaner
             MaximizeBox = false;
             Name = "Form1";
             StartPosition = FormStartPosition.CenterScreen;
-            Text = "应用数据清理工具V0.1";
+            Text = "应用数据清理工具V0.1.2";
             ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
             ResumeLayout(false);
         }
