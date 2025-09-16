@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("AppDataCleaner")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+34cc7b27601cd704552905981e972702d4610bd6")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d49ab2b04d3cef397f0c4be972d733adb6fedc52")]
 [assembly: System.Reflection.AssemblyProductAttribute("AppDataCleaner")]
 [assembly: System.Reflection.AssemblyTitleAttribute("AppDataCleaner")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
