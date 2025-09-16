@@ -12,12 +12,9 @@
 ## 使用方法
 点击 [这里](https://github.com/Gwenep/AppDataCleaner/releases) 访问发布页面并下载最新版本。
 下载后解压，双击AppDataCleaner.exe运行。
-![QQ20250307-093125](https://github.com/user-attachments/assets/21c600a4-fd4e-4587-ab1c-f51e59b40bd1)
+![app](https://github.com/Gwenep/AppDataCleaner/blob/main/img/app.png)
 
 
 
 ## 贡献
 欢迎任何形式的贡献！你可以通过提交 issues 或 pull requests 来帮助我们改进 AppDataCleaner。
-
-## 许可
-本项目根据 GNU 通用公共许可证 v3.0 许可。有关详细信息，请参阅 [LICENSE](./LICENSE) 文件。
