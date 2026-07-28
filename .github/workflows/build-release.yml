@@ -1,0 +1,112 @@
+name: Build & Release
+
+on:
+  push:
+    branches: [main]
+    tags: ["V*"]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Restore
+        run: dotnet restore
+
+      - name: Publish (single-file)
+        run: |
+          dotnet publish -c Release `
+            -r win-x64 `
+            --self-contained true `
+            -p:PublishSingleFile=true `
+            -p:EnableCompressionInSingleFile=true `
+            -p:IncludeNativeLibrariesForSelfExtract=true `
+            -p:IncludeAllContentForSelfExtract=true `
+            -p:DebugType=None `
+            -o publish
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: AppDataCleaner
+          path: |
+            publish/AppDataCleaner.exe
+            publish/appname.json
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/')
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Generate changelog
+        id: changelog
+        shell: pwsh
+        run: |
+          $prevTag = git describe --tags --abbrev=0 ${{ github.ref_name }}^ 2>$null
+          if (-not $prevTag) { $prevTag = $(git rev-list --max-parents=0 HEAD) }
+          $log = git log "$prevTag..${{ github.ref_name }}" --pretty=format:"- %s" --no-merges
+          "changelog<<EOF" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+          $log | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+          "EOF" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+
+      - name: Generate categorized changelog
+        id: changelog_categorized
+        shell: pwsh
+        run: |
+          $prevTag = git describe --tags --abbrev=0 ${{ github.ref_name }}^ 2>$null
+          if (-not $prevTag) { $prevTag = $(git rev-list --max-parents=0 HEAD) }
+          $msgs = git log "$prevTag..${{ github.ref_name }}" --pretty=format:"%s" --no-merges
+
+          $feat = @(); $fix = @(); $other = @()
+          foreach ($m in $msgs) {
+            if ($m -match '^feat[:(]') { $feat += "- $m" }
+            elseif ($m -match '^fix[:(]') { $fix += "- $m" }
+            else { $other += "- $m" }
+          }
+
+          $body = @()
+          if ($feat.Count) { $body += "### 🚀 新功能"; $body += $feat; $body += "" }
+          if ($fix.Count)  { $body += "### 🐛 修复"; $body += $fix; $body += "" }
+          if ($other.Count){ $body += "### 🔧 其他"; $body += $other; $body += "" }
+          if ($body.Count -eq 0) { $body += "初始版本" }
+
+          $body -join "`n" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+          "changelog_categorized<<EOF" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+          $body -join "`n" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+          "EOF" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: AppDataCleaner
+          path: release_files
+
+      - name: Package as zip
+        run: |
+          cd release_files
+          zip ../AppDataCleaner-${{ github.ref_name }}.zip AppDataCleaner.exe appname.json
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: AppDataCleaner-${{ github.ref_name }}.zip
+          body: |
+            ## 更新内容
+
+            ${{ steps.changelog_categorized.outputs.changelog_categorized || '首次发布' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
