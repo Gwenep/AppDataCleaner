@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Gwenep")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("0.2.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("0.2.0.0+d3900dd13eca488cab81efd6548ffaa330396d64")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("0.2.0.0+a36786b11f3924581a68492a89b2b117f5df4e01")]
 [assembly: System.Reflection.AssemblyProductAttribute("AppDataCleaner")]
 [assembly: System.Reflection.AssemblyTitleAttribute("AppDataCleaner")]
 [assembly: System.Reflection.AssemblyVersionAttribute("0.2.0.0")]
