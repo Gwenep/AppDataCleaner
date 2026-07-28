@@ -52,17 +52,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Generate changelog
-        id: changelog
-        shell: pwsh
-        run: |
-          $prevTag = git describe --tags --abbrev=0 ${{ github.ref_name }}^ 2>$null
-          if (-not $prevTag) { $prevTag = $(git rev-list --max-parents=0 HEAD) }
-          $log = git log "$prevTag..${{ github.ref_name }}" --pretty=format:"- %s" --no-merges
-          "changelog<<EOF" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
-          $log | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
-          "EOF" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
-
       - name: Generate categorized changelog
         id: changelog_categorized
         shell: pwsh
@@ -78,16 +67,13 @@ jobs:
             else { $other += "- $m" }
           }
 
-          $body = @()
-          if ($feat.Count) { $body += "### 🚀 新功能"; $body += $feat; $body += "" }
-          if ($fix.Count)  { $body += "### 🐛 修复"; $body += $fix; $body += "" }
-          if ($other.Count){ $body += "### 🔧 其他"; $body += $other; $body += "" }
-          if ($body.Count -eq 0) { $body += "初始版本" }
+          $body = @("## 更新内容", "")
+          if ($feat.Count) { $body += "新功能"; $body += $feat; $body += "" }
+          if ($fix.Count)  { $body += "修复"; $body += $fix; $body += "" }
+          if ($other.Count){ $body += "其他"; $body += $other; $body += "" }
+          if ($body.Count -eq 2) { $body += "首次发布" }
 
-          $body -join "`n" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
-          "changelog_categorized<<EOF" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
-          $body -join "`n" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
-          "EOF" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+          $body -join "`n" | Out-File -FilePath "changelog_body.txt" -Encoding utf8
 
       - name: Download artifact
         uses: actions/download-artifact@v4
@@ -104,9 +90,6 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: AppDataCleaner-${{ github.ref_name }}.zip
-          body: |
-            ## 更新内容
-
-            ${{ steps.changelog_categorized.outputs.changelog_categorized || '首次发布' }}
+          body_path: changelog_body.txt
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
