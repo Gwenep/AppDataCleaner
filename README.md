@@ -11,7 +11,7 @@
 
 ## 使用方法
 点击 [这里](https://github.com/Gwenep/AppDataCleaner/releases) 访问发布页面并下载最新版本。
-下载后解压，双击AppDataCleaner.exe运行。
+下载后解压，确保 `AppDataCleaner.exe` 和 `appname.json` 在同一目录下，双击AppDataCleaner.exe运行。
 ![app](https://github.com/Gwenep/AppDataCleaner/blob/main/img/app.png)
 
 
