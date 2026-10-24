@@ -29,7 +29,7 @@ namespace AppDataCleaner
 
             try
             {
-                string path = Path.Combine(AppContext.BaseDirectory, "AppDataCleaner.ico");
+                string path = Path.Combine(FileSystemUtils.GetApplicationDirectory(), "AppDataCleaner.ico");
                 if (File.Exists(path))
                     return new Icon(path);
             }
@@ -74,7 +74,7 @@ namespace AppDataCleaner
 
             try
             {
-                string path = Path.Combine(AppContext.BaseDirectory, "AppDataCleaner.ico");
+                string path = Path.Combine(FileSystemUtils.GetApplicationDirectory(), "AppDataCleaner.ico");
                 if (File.Exists(path))
                 {
                     using var icon = new Icon(path, size, size);

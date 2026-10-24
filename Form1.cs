@@ -61,8 +61,8 @@ namespace AppDataCleaner
 
         public Form1()
         {
-            // 备注文件路径，在应用所在目录（框架依赖和单文件发布时都正确）
-            _notesFilePath = Path.Combine(AppContext.BaseDirectory, "appname.json");
+            // 备注文件路径：优先使用 exe 同目录，单文件发布时也不会落到临时解压目录
+            _notesFilePath = Path.Combine(FileSystemUtils.GetApplicationDirectory(), "appname.json");
 
             InitializeComponent();
 
@@ -154,7 +154,10 @@ namespace AppDataCleaner
             try
             {
                 if (!File.Exists(_notesFilePath))
+                {
+                    AppLogger.Warn($"未找到备注文件: {_notesFilePath}");
                     return;
+                }
 
                 string json = File.ReadAllText(_notesFilePath);
                 var deserialized = JsonSerializer.Deserialize<Dictionary<string, string>>(json);
@@ -164,6 +167,8 @@ namespace AppDataCleaner
                 _notes.Clear();
                 foreach (var pair in deserialized)
                     _notes[pair.Key] = pair.Value ?? "";
+
+                AppLogger.Info($"已加载备注文件: {_notesFilePath}（{_notes.Count} 条）");
             }
             catch (Exception ex)
             {

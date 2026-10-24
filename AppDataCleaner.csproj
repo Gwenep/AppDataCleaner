@@ -11,8 +11,8 @@
     <ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>
 
     <Company>Gwenep</Company>
-    <Version>0.3.0.0</Version>
-    <FileVersion>0.3.0.0</FileVersion>
+    <Version>0.3.1.0</Version>
+    <FileVersion>0.3.1.0</FileVersion>
     <ApplicationIcon>AppDataCleaner.ico</ApplicationIcon>
   </PropertyGroup>
 

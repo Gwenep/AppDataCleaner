@@ -12,6 +12,31 @@ namespace AppDataCleaner
     internal static class FileSystemUtils
     {
         /// <summary>
+        /// 程序实际所在的目录（用户双击的 exe 所在位置）。
+        /// 单文件发布时 AppContext.BaseDirectory 指向临时解压目录，
+        /// 而 Assembly.Location 为空，因此必须优先使用 ProcessPath。
+        /// </summary>
+        public static string GetApplicationDirectory()
+        {
+            try
+            {
+                string exePath = Environment.ProcessPath ?? "";
+                if (exePath.Length > 0)
+                {
+                    string? dir = Path.GetDirectoryName(exePath);
+                    if (!string.IsNullOrEmpty(dir))
+                        return dir;
+                }
+            }
+            catch
+            {
+                // 忽略并回退
+            }
+
+            return AppContext.BaseDirectory;
+        }
+
+        /// <summary>
         /// 检测当前是否以管理员身份运行。
         /// </summary>
         public static bool IsAdministrator()
