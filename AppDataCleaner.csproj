@@ -11,13 +11,14 @@
     <ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>
 
     <Company>Gwenep</Company>
-    <Version>0.2.0.0</Version>
-    <FileVersion>0.2.0.0</FileVersion>
+    <Version>0.3.0.0</Version>
+    <FileVersion>0.3.0.0</FileVersion>
     <ApplicationIcon>AppDataCleaner.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
     <Content Include="appname.json" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" ExcludeFromSingleFile="true" />
+    <EmbeddedResource Include="AppDataCleaner.ico" LogicalName="AppDataCleaner.AppDataCleaner.ico" />
   </ItemGroup>
 
 </Project>

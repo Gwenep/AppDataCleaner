@@ -1,6 +1,8 @@
 using System;
 using System.IO;
 using System.Security.Principal;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace AppDataCleaner
 {
@@ -65,7 +67,41 @@ namespace AppDataCleaner
         }
 
         /// <summary>
-        /// 永久删除文件或文件夹。
+        /// 在专用 STA 线程上异步删除文件或文件夹，避免长时间操作阻塞界面。
+        /// 回收站操作依赖 Windows Shell，需要 STA 线程。
+        /// </summary>
+        public static Task<bool> DeleteAsync(string path, bool useRecycleBin)
+        {
+            var completion = new TaskCompletionSource<bool>(
+                TaskCreationOptions.RunContinuationsAsynchronously);
+
+            var thread = new Thread(() =>
+            {
+                try
+                {
+                    bool deleted = useRecycleBin
+                        ? SendToRecycleBin(path)
+                        : ForceDelete(path);
+                    completion.TrySetResult(deleted);
+                }
+                catch (Exception ex)
+                {
+                    completion.TrySetException(ex);
+                }
+            })
+            {
+                IsBackground = true,
+                Name = "AppDataCleaner.Delete"
+            };
+
+            thread.SetApartmentState(ApartmentState.STA);
+            thread.Start();
+
+            return completion.Task;
+        }
+
+        /// <summary>
+        /// 永久删除文件或文件夹。遇到只读文件时会先清除只读属性再重试。
         /// </summary>
         public static bool ForceDelete(string path)
         {
@@ -73,20 +109,83 @@ namespace AppDataCleaner
             {
                 if (Directory.Exists(path))
                 {
-                    Directory.Delete(path, true);
+                    try
+                    {
+                        Directory.Delete(path, true);
+                    }
+                    catch (UnauthorizedAccessException)
+                    {
+                        ClearReadOnlyAttributes(path);
+                        Directory.Delete(path, true);
+                    }
                     return true;
                 }
-                else if (File.Exists(path))
+
+                if (File.Exists(path))
                 {
-                    File.Delete(path);
+                    try
+                    {
+                        File.Delete(path);
+                    }
+                    catch (UnauthorizedAccessException)
+                    {
+                        var attributes = File.GetAttributes(path);
+                        File.SetAttributes(path, attributes & ~FileAttributes.ReadOnly);
+                        File.Delete(path);
+                    }
                     return true;
                 }
+
                 return false;
             }
             catch (Exception ex)
             {
                 AppLogger.Error($"永久删除失败: {path}", ex);
                 throw;
+            }
+        }
+
+        private static void ClearReadOnlyAttributes(string directory)
+        {
+            var options = new EnumerationOptions
+            {
+                IgnoreInaccessible = true,
+                RecurseSubdirectories = true,
+                // 跳过目录联接/符号链接，避免递归进入其他目录或形成循环。
+                AttributesToSkip = FileAttributes.ReparsePoint,
+                ReturnSpecialDirectories = false
+            };
+
+            try
+            {
+                var rootAttributes = File.GetAttributes(directory);
+                if ((rootAttributes & FileAttributes.ReadOnly) != 0)
+                    File.SetAttributes(directory, rootAttributes & ~FileAttributes.ReadOnly);
+            }
+            catch
+            {
+                // 根目录属性无法修改时继续尝试清理子项
+            }
+
+            try
+            {
+                foreach (string path in Directory.EnumerateFileSystemEntries(directory, "*", options))
+                {
+                    try
+                    {
+                        var attributes = File.GetAttributes(path);
+                        if ((attributes & FileAttributes.ReadOnly) != 0)
+                            File.SetAttributes(path, attributes & ~FileAttributes.ReadOnly);
+                    }
+                    catch
+                    {
+                        // 单个项目无法修改属性时忽略
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                AppLogger.Warn($"清除只读属性失败: {directory} | {ex.Message}");
             }
         }
     }
